@@ -1,24 +1,46 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { NavLink } from "react-router-dom";
+import { api } from "../api/axios";
 
 export default function Home() {
-  const [stats, setStats] = useState({ items: 0 });
+  const [totalItems, setTotalItems] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/public/stats") // falta hacer endpoint en el backend
-      .then((res) => setStats(res.data))
-      .catch((err) => console.log(err));
+    const fetchStats = async () => {
+      try {
+        const response = await api.get("/items/count/public");
+        setTotalItems(response.data.count);
+      } catch (error) {
+        console.error("Error al traer datos públicos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
   }, []);
 
   return (
-    <div className="landing">
-      <h1>Organizador de Hogar 🏠</h1>
-      <p>Controlá dónde están tus cosas de forma jerárquica.</p>
-      <div className="stats">
-        Actualmente hay <strong>{stats.items}</strong> objetos organizados.
+    <div style={{ padding: "2rem", textAlign: "center" }}>
+      <h1>Organizador del Hogar 🏠</h1>
+      <p>Controlá dónde están tus cosas: desde la habitación hasta el cajón.</p>
+      <div>
+        <h3>Estadísticas de la Comunidad</h3>
+        {loading ? (
+          <p>Cargando datos...</p>
+        ) : (
+          <p>
+            Hay <strong>{totalItems}</strong> objetos organizados actualmente.
+          </p>
+        )}
       </div>
-      <a href="/login">Comenzar a organizar</a>
+      <nav>
+        <NavLink to="/login" style={{ marginRight: "1rem" }}>
+          Iniciar Sesión
+        </NavLink>
+        <NavLink to="/register">Crear Cuenta</NavLink>
+      </nav>
     </div>
   );
 }
