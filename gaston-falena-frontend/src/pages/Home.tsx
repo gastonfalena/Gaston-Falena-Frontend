@@ -6,13 +6,15 @@ export default function Home() {
   const [totalItems, setTotalItems] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
 
+  // En Home.tsx
+
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await api.get("/items/count/public");
-        setTotalItems(response.data.count);
+        const response = await api.get("/items/total");
+        setTotalItems(response.data.total);
       } catch (error) {
-        console.error("Error al traer datos públicos:", error);
+        console.error("Error al conectar con el servidor:", error);
       } finally {
         setLoading(false);
       }
