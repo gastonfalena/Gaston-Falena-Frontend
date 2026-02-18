@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/axios";
-import { useNavigate } from "react-router-dom";
 
 interface House {
   _id: string;
@@ -20,8 +19,6 @@ interface Item {
 }
 
 export default function Dashboard() {
-  const navigate = useNavigate();
-
   const [houses, setHouses] = useState<House[]>([]);
   const [containers, setContainers] = useState<Container[]>([]);
   const [items, setItems] = useState<Item[]>([]);
@@ -86,6 +83,7 @@ export default function Dashboard() {
     if (selectedContainerId) {
       fetchItems();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedContainerId]);
 
   const handleCreateHouse = async (e: React.FormEvent) => {
@@ -156,12 +154,10 @@ export default function Dashboard() {
     }
   };
 
-  // --- NUEVA FUNCIÓN: ELIMINAR ITEM ---
   const handleDeleteItem = async (id: string) => {
     if (!window.confirm("¿Borrar objeto?")) return;
     try {
       await api.delete(`/items/${id}`);
-      // Actualizamos la lista visualmente quitando el item borrado
       setItems((prev) => prev.filter((i) => i._id !== id));
     } catch (error) {
       console.error(error);
@@ -169,27 +165,41 @@ export default function Dashboard() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    navigate("/login");
+  const handleUpdateItem = async (item: Item) => {
+    const newName = window.prompt("Nuevo nombre:", item.name);
+    if (newName === null) return;
+
+    const newQtyStr = window.prompt(
+      "Nueva cantidad:",
+      item.quantity.toString(),
+    );
+    if (newQtyStr === null) return;
+
+    const newQty = Number(newQtyStr);
+    if (isNaN(newQty) || newQty < 1) return alert("Cantidad inválida");
+
+    try {
+      await api.put(`/items/${item._id}`, {
+        name: newName,
+        quantity: newQty,
+      });
+
+      setItems((prev) =>
+        prev.map((i) =>
+          i._id === item._id ? { ...i, name: newName, quantity: newQty } : i,
+        ),
+      );
+    } catch (error) {
+      console.error(error);
+      alert("Error al actualizar");
+    }
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "20px",
-        }}
-      >
-        <h1>Panel de Control</h1>
-        <button onClick={handleLogout}>Cerrar Sesión</button>
-      </header>
-
-      <section>
-        <h2>Casas</h2>
-        <form onSubmit={handleCreateHouse}>
+    <div className="dashboard-container">
+      <section className="section-houses">
+        <h2>1. Mis Casas</h2>
+        <form className="form-create" onSubmit={handleCreateHouse}>
           <input
             type="text"
             placeholder="Nombre de la casa"
@@ -205,30 +215,19 @@ export default function Dashboard() {
             required
             style={{ marginLeft: "10px" }}
           />
-          <button type="submit" style={{ marginLeft: "10px" }}>
+          <button type="submit" className="btn-create">
             Crear
           </button>
         </form>
 
-        <div
-          style={{
-            marginTop: "10px",
-            display: "flex",
-            gap: "10px",
-            flexWrap: "wrap",
-          }}
-        >
+        <div className="list-houses">
           {houses.map((h) => (
             <button
               key={h._id}
               onClick={() => setSelectedHouseId(h._id)}
-              style={{
-                fontWeight: selectedHouseId === h._id ? "bold" : "normal",
-                backgroundColor: selectedHouseId === h._id ? "#ccc" : "#eee",
-                padding: "5px 10px",
-                cursor: "pointer",
-                border: "1px solid #999",
-              }}
+              className={
+                selectedHouseId === h._id ? "card-house active" : "card-house"
+              }
             >
               {h.name}
             </button>
@@ -237,9 +236,9 @@ export default function Dashboard() {
       </section>
 
       {selectedHouseId && (
-        <section style={{ marginTop: "2rem" }}>
-          <h2>Contenedores</h2>
-          <form onSubmit={handleCreateContainer}>
+        <section className="section-containers">
+          <h2>2. Contenedores</h2>
+          <form className="form-create" onSubmit={handleCreateContainer}>
             <input
               type="text"
               placeholder="Nuevo Contenedor"
@@ -247,26 +246,36 @@ export default function Dashboard() {
               onChange={(e) => setNewContainerName(e.target.value)}
               required
             />
-            <button type="submit" style={{ marginLeft: "10px" }}>
+            <button type="submit" className="btn-create">
               Crear
             </button>
           </form>
 
-          <ul style={{ marginTop: "10px" }}>
+          <ul className="list-containers">
             {containers.map((c) => (
-              <li key={c._id} style={{ marginBottom: "5px" }}>
-                <span style={{ fontWeight: "bold", marginRight: "10px" }}>
-                  {c.name}
-                </span>
-                <button onClick={() => setSelectedContainerId(c._id)}>
-                  Ver Objetos
-                </button>
-                <button
-                  onClick={() => handleDeleteContainer(c._id)}
-                  style={{ marginLeft: "5px", color: "red" }}
-                >
-                  Eliminar
-                </button>
+              <li
+                key={c._id}
+                className={
+                  selectedContainerId === c._id
+                    ? "item-container active"
+                    : "item-container"
+                }
+              >
+                <span className="item-name">{c.name}</span>
+                <div className="item-actions">
+                  <button
+                    className="btn-view"
+                    onClick={() => setSelectedContainerId(c._id)}
+                  >
+                    Ver Objetos
+                  </button>
+                  <button
+                    className="btn-delete"
+                    onClick={() => handleDeleteContainer(c._id)}
+                  >
+                    Eliminar
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
@@ -274,9 +283,9 @@ export default function Dashboard() {
       )}
 
       {selectedContainerId && (
-        <section style={{ marginTop: "2rem" }}>
-          <h2>Objetos</h2>
-          <form onSubmit={handleCreateItem}>
+        <section className="section-items">
+          <h2>3. Objetos</h2>
+          <form className="form-create" onSubmit={handleCreateItem}>
             <input
               type="text"
               placeholder="Objeto"
@@ -289,34 +298,36 @@ export default function Dashboard() {
               placeholder="Cant"
               value={newItemQty}
               onChange={(e) => setNewItemQty(Number(e.target.value))}
-              style={{ width: "60px", marginLeft: "10px" }}
               required
               min="1"
+              className="input-qty"
             />
-            <button type="submit" style={{ marginLeft: "10px" }}>
+            <button type="submit" className="btn-create">
               Agregar
             </button>
           </form>
 
-          <ul style={{ marginTop: "10px" }}>
+          <ul className="list-items">
             {items.map((i) => (
-              <li key={i._id} style={{ marginBottom: "5px" }}>
-                {/* Nombre y Cantidad */}
-                <span>
+              <li key={i._id} className="item-row">
+                <span className="item-info">
                   {i.name} (x{i.quantity})
                 </span>
 
-                {/* BOTÓN DE ELIMINAR ÍTEM */}
-                <button
-                  onClick={() => handleDeleteItem(i._id)}
-                  style={{
-                    marginLeft: "10px",
-                    color: "red",
-                    fontWeight: "bold",
-                  }}
-                >
-                  X
-                </button>
+                <div className="item-actions">
+                  <button
+                    className="btn-edit"
+                    onClick={() => handleUpdateItem(i)}
+                  >
+                    ✎
+                  </button>
+                  <button
+                    className="btn-delete"
+                    onClick={() => handleDeleteItem(i._id)}
+                  >
+                    X
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
