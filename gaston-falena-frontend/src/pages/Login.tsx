@@ -30,23 +30,26 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginFormInputs>({
     resolver: joiResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
     try {
-      const response = await api.post("/users/login", data);
+      const response = await api.post("/auth/login", data);
 
       if (response.status === 200) {
+        const { token } = response.data;
+        localStorage.setItem("token", token);
         localStorage.setItem("isAuthenticated", "true");
+
         navigate("/dashboard");
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const message =
-          error.response?.data?.message || "Error al iniciar sesión";
+          error.response?.data?.message || "Credenciales incorrectas";
         alert(message);
       } else {
         console.error("Error inesperado:", error);
@@ -85,8 +88,8 @@ export default function Login() {
           )}
         </div>
 
-        <button type="submit" className="btn-submit">
-          Ingresar
+        <button type="submit" className="btn-submit" disabled={isSubmitting}>
+          {isSubmitting ? "Ingresando..." : "Ingresar"}
         </button>
       </form>
     </div>
