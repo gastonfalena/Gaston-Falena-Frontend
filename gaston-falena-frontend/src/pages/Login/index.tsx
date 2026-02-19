@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { api } from "../../api/axios";
+import "./login.css"; // ¡No olvides importar el CSS!
 
 interface LoginFormInputs {
   email: string;
@@ -26,6 +28,7 @@ const loginSchema = Joi.object({
 
 export default function Login() {
   const navigate = useNavigate();
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -36,6 +39,7 @@ export default function Login() {
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
+    setServerError(null); // Limpiamos errores previos
     try {
       const response = await api.post("/auth/login", data);
 
@@ -50,48 +54,67 @@ export default function Login() {
       if (axios.isAxiosError(error)) {
         const message =
           error.response?.data?.message || "Credenciales incorrectas";
-        alert(message);
+        setServerError(message); // En lugar de alert, usamos el estado
       } else {
+        setServerError("Error inesperado al conectar con el servidor.");
         console.error("Error inesperado:", error);
       }
     }
   };
 
   return (
-    <div className="login-page">
-      <form className="login-form" onSubmit={handleSubmit(onSubmit)} noValidate>
-        <h2>Iniciar Sesión</h2>
+    <div className="auth-wrapper">
+      <div className="auth-card">
+        <h2>Iniciar Sesión 👋</h2>
+        <p className="auth-subtitle">Ingresa a tu cuenta para continuar</p>
 
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            {...register("email")}
-            type="email"
-            id="email"
-            placeholder="ejemplo@correo.com"
-          />
-          {errors.email && (
-            <span className="error-msg">{errors.email.message}</span>
-          )}
+        {/* Mostramos errores que vienen del backend (Ej: Contraseña mal) */}
+        {serverError && <div className="error-message">{serverError}</div>}
+
+        <form
+          className="auth-form"
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+        >
+          <div className="input-group">
+            <label htmlFor="email">Email</label>
+            <input
+              {...register("email")}
+              type="email"
+              id="email"
+              placeholder="ejemplo@correo.com"
+              /* Si hay error de Joi, le ponemos un borde rojo */
+              className={errors.email ? "input-error" : ""}
+            />
+            {/* Mensaje de error de Joi (Ej: Formato inválido) */}
+            {errors.email && (
+              <span className="error-text">{errors.email.message}</span>
+            )}
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="password">Contraseña</label>
+            <input
+              {...register("password")}
+              type="password"
+              id="password"
+              placeholder="******"
+              className={errors.password ? "input-error" : ""}
+            />
+            {errors.password && (
+              <span className="error-text">{errors.password.message}</span>
+            )}
+          </div>
+
+          <button type="submit" className="btn-submit" disabled={isSubmitting}>
+            {isSubmitting ? "Ingresando..." : "Ingresar"}
+          </button>
+        </form>
+
+        <div className="auth-footer">
+          ¿No tienes una cuenta? <Link to="/register">Regístrate aquí</Link>
         </div>
-
-        <div className="form-group">
-          <label htmlFor="password">Contraseña</label>
-          <input
-            {...register("password")}
-            type="password"
-            id="password"
-            placeholder="******"
-          />
-          {errors.password && (
-            <span className="error-msg">{errors.password.message}</span>
-          )}
-        </div>
-
-        <button type="submit" className="btn-submit" disabled={isSubmitting}>
-          {isSubmitting ? "Ingresando..." : "Ingresar"}
-        </button>
-      </form>
+      </div>
     </div>
   );
 }

@@ -52,7 +52,7 @@ export default function HouseSection({
 
   return (
     <section className="section-houses">
-      <h2>1. Mis Casas</h2>
+      <h2>Mis Casas</h2>
       <form className="form-create" onSubmit={handleCreateHouse}>
         <input
           type="text"

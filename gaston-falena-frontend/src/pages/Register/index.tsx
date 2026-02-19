@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { api } from "../../api/axios";
+import "./register.css";
 
 interface RegisterFormInputs {
   name: string;
@@ -32,6 +34,7 @@ const registerSchema = Joi.object({
 
 export default function Register() {
   const navigate = useNavigate();
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -42,72 +45,82 @@ export default function Register() {
   });
 
   const onSubmit = async (data: RegisterFormInputs) => {
+    setServerError(null);
     try {
       await api.post("/users/register", data);
-
-      alert("¡Cuenta creada! Por favor inicia sesión.");
       navigate("/login");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        alert(error.response?.data?.message || "Error al registrarse");
+        setServerError(error.response?.data?.message || "Error al registrarse");
       } else {
-        console.error(error);
-        alert("Error inesperado");
+        setServerError("Error inesperado al conectar con el servidor.");
       }
     }
   };
 
   return (
-    <div>
-      <h2>Crear Cuenta</h2>
+    <div className="auth-wrapper">
+      <div className="auth-card">
+        <h2>Crear Cuenta</h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <div>
-          <label htmlFor="name">Usuario</label>
-          <input
-            id="name"
-            type="text"
-            placeholder="Tu nombre de usuario"
-            {...register("name")}
-          />
-          {errors.name && (
-            <span style={{ color: "red" }}>{errors.name.message}</span>
-          )}
+        {serverError && <div className="error-message">{serverError}</div>}
+
+        <form
+          className="auth-form"
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+        >
+          <div className="input-group">
+            <label htmlFor="name">Usuario</label>
+            <input
+              id="name"
+              type="text"
+              placeholder="Tu nombre de usuario"
+              className={errors.name ? "input-error" : ""}
+              {...register("name")}
+            />
+            {errors.name && (
+              <span className="error-text">{errors.name.message}</span>
+            )}
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="ejemplo@correo.com"
+              className={errors.email ? "input-error" : ""}
+              {...register("email")}
+            />
+            {errors.email && (
+              <span className="error-text">{errors.email.message}</span>
+            )}
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="password">Contraseña</label>
+            <input
+              id="password"
+              type="password"
+              placeholder="******"
+              className={errors.password ? "input-error" : ""}
+              {...register("password")}
+            />
+            {errors.password && (
+              <span className="error-text">{errors.password.message}</span>
+            )}
+          </div>
+
+          <button type="submit" className="btn-submit" disabled={isSubmitting}>
+            {isSubmitting ? "Registrando..." : "Registrarse"}
+          </button>
+        </form>
+
+        <div className="auth-footer">
+          ¿Ya tienes cuenta? <Link to="/login">Inicia Sesión</Link>
         </div>
-
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            placeholder="ejemplo@correo.com"
-            {...register("email")}
-          />
-          {errors.email && (
-            <span style={{ color: "red" }}>{errors.email.message}</span>
-          )}
-        </div>
-        <div>
-          <label htmlFor="password">Contraseña</label>
-          <input
-            id="password"
-            type="password"
-            placeholder="******"
-            {...register("password")}
-          />
-          {errors.password && (
-            <span style={{ color: "red" }}>{errors.password.message}</span>
-          )}
-        </div>
-
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Registrando..." : "Registrarse"}
-        </button>
-      </form>
-
-      <p>
-        ¿Ya tienes cuenta? <Link to="/login">Inicia Sesión</Link>
-      </p>
+      </div>
     </div>
   );
 }

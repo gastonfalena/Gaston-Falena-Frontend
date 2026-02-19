@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../../api/axios";
+import ItemSection from "../ItemSection";
 import "./ContainerSection.css";
 
 interface Container {
@@ -68,7 +69,7 @@ export default function ContainerSection({
 
   return (
     <section className="section-containers">
-      <h2>2. Contenedores</h2>
+      <h2>Contenedores</h2>
       <form className="form-create" onSubmit={handleCreateContainer}>
         <input
           type="text"
@@ -84,29 +85,40 @@ export default function ContainerSection({
 
       <ul className="list-containers">
         {containers.map((c) => (
-          <li
-            key={c._id}
-            className={
-              selectedContainerId === c._id
-                ? "item-container active"
-                : "item-container"
-            }
-          >
-            <span className="item-name">{c.name}</span>
-            <div className="item-actions">
-              <button
-                className="btn-view"
-                onClick={() => onSelectContainer(c._id)}
-              >
-                Ver Objetos
-              </button>
-              <button
-                className="btn-delete"
-                onClick={() => handleDeleteContainer(c._id)}
-              >
-                Eliminar
-              </button>
+          <li key={c._id} style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              className={
+                selectedContainerId === c._id
+                  ? "item-container active"
+                  : "item-container"
+              }
+            >
+              <span className="item-name">{c.name}</span>
+              <div className="item-actions">
+                <button
+                  className="btn-view"
+                  onClick={() =>
+                    onSelectContainer(
+                      selectedContainerId === c._id ? "" : c._id,
+                    )
+                  }
+                >
+                  {selectedContainerId === c._id ? "Ocultar" : "Ver Objetos"}
+                </button>
+                <button
+                  className="btn-delete"
+                  onClick={() => handleDeleteContainer(c._id)}
+                >
+                  Eliminar
+                </button>
+              </div>
             </div>
+
+            {selectedContainerId === c._id && (
+              <div className="nested-items-wrapper">
+                <ItemSection containerId={c._id} />
+              </div>
+            )}
           </li>
         ))}
       </ul>

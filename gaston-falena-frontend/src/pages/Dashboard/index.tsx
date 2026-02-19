@@ -1,7 +1,6 @@
 import { useState } from "react";
 import HouseSection from "../../components/HouseSection";
 import ContainerSection from "../../components/ContainerSection";
-import ItemSection from "../../components/ItemSection";
 import "./Dashboard.css";
 
 export default function Dashboard() {
@@ -15,21 +14,22 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      {/* 1. SECCIÓN CASAS */}
-      <HouseSection
-        selectedHouseId={selectedHouseId}
-        onSelectHouse={handleSelectHouse}
-      />
+      <div className="dashboard-column">
+        <HouseSection
+          selectedHouseId={selectedHouseId}
+          onSelectHouse={handleSelectHouse}
+        />
+      </div>
 
       {selectedHouseId && (
-        <ContainerSection
-          houseId={selectedHouseId}
-          selectedContainerId={selectedContainerId}
-          onSelectContainer={setSelectedContainerId}
-        />
+        <div className="dashboard-column">
+          <ContainerSection
+            houseId={selectedHouseId}
+            selectedContainerId={selectedContainerId}
+            onSelectContainer={setSelectedContainerId}
+          />
+        </div>
       )}
-
-      {selectedContainerId && <ItemSection containerId={selectedContainerId} />}
     </div>
   );
 }

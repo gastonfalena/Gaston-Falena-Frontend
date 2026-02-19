@@ -89,7 +89,7 @@ export default function ItemSection({ containerId }: ItemSectionProps) {
 
   return (
     <section className="section-items">
-      <h2>3. Objetos</h2>
+      <h2>Objetos</h2>
       <form className="form-create" onSubmit={handleCreateItem}>
         <input
           type="text"
@@ -105,9 +105,7 @@ export default function ItemSection({ containerId }: ItemSectionProps) {
           onChange={(e) => setNewItemQty(Number(e.target.value))}
           required
           min="1"
-          style={{
-            width: "70px",
-          }}
+          style={{ width: "70px" }}
         />
         <button type="submit" className="btn-create">
           Agregar
