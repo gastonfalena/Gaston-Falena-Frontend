@@ -3,7 +3,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { api } from "../api/axios";
+import { api } from "../../api/axios";
 
 interface RegisterFormInputs {
   name: string;

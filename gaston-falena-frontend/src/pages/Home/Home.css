@@ -1,0 +1,106 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 2rem;
+  text-align: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.home-title {
+  font-size: 3rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.home-subtitle {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  max-width: 600px;
+  margin-bottom: 2.5rem;
+  line-height: 1.5;
+}
+
+.stats-card {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); /* Sombra elegante */
+  margin-bottom: 2.5rem;
+  min-width: 300px;
+  border: 1px solid #eaeaea;
+}
+
+.stats-card h3 {
+  margin-top: 0;
+  color: #34495e;
+  margin-bottom: 1rem;
+}
+
+.stats-number {
+  font-size: 2rem;
+  color: #3498db;
+}
+
+.loading-text {
+  color: #95a5a6;
+  font-style: italic;
+}
+
+.home-actions {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-home {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-login {
+  background-color: transparent;
+  color: #3498db;
+  border: 2px solid #3498db;
+}
+
+.btn-login:hover {
+  background-color: #3498db;
+  color: white;
+  box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+}
+
+.btn-register {
+  background-color: #3498db;
+  color: white;
+  border: 2px solid #3498db;
+}
+
+.btn-register:hover {
+  background-color: #2980b9;
+  border-color: #2980b9;
+  box-shadow: 0 4px 10px rgba(41, 128, 185, 0.3);
+}
+
+@media (max-width: 600px) {
+  .home-title {
+    font-size: 2.2rem;
+  }
+  .home-actions {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+  }
+  .btn-home {
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

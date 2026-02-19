@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { api } from "../api/axios";
+import { api } from "../../api/axios";
+import "./home.css";
 
 export default function Home() {
   const [totalItems, setTotalItems] = useState<number>(0);
@@ -22,24 +23,31 @@ export default function Home() {
   }, []);
 
   return (
-    <div style={{ padding: "2rem", textAlign: "center" }}>
-      <h1>Organizador del Hogar 🏠</h1>
-      <p>Controlá dónde están tus cosas: desde la habitación hasta el cajón.</p>
-      <div>
+    <div className="home-container">
+      <h1 className="home-title">Organizador del Hogar 🏠</h1>
+      <p className="home-subtitle">
+        Controlá dónde están tus cosas: desde la habitación hasta el cajón.
+      </p>
+
+      <div className="stats-card">
         <h3>Estadísticas de la Comunidad</h3>
         {loading ? (
-          <p>Cargando datos...</p>
+          <p className="loading-text">⏳ Cargando datos...</p>
         ) : (
           <p>
-            Hay <strong>{totalItems}</strong> objetos organizados actualmente.
+            Hay <strong className="stats-number">{totalItems}</strong> objetos
+            organizados actualmente.
           </p>
         )}
       </div>
-      <nav>
-        <NavLink to="/login" style={{ marginRight: "1rem" }}>
+
+      <nav className="home-actions">
+        <NavLink to="/login" className="btn-home btn-login">
           Iniciar Sesión
         </NavLink>
-        <NavLink to="/register">Crear Cuenta</NavLink>
+        <NavLink to="/register" className="btn-home btn-register">
+          Crear Cuenta
+        </NavLink>
       </nav>
     </div>
   );

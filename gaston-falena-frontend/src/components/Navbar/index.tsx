@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import "./navbar.css";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -11,16 +12,13 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      {/* LOGO SIEMPRE FIJO: Te lleva a la Home */}
       <Link to="/" className="navbar-logo">
         🏠 Inicio
       </Link>
 
       <div className="navbar-links">
         {isAuthenticated ? (
-          /* MENÚ DE USUARIO LOGUEADO */
           <>
-            {/* Solo se muestra si estás logueado y reemplaza a "Dashboard" */}
             <Link
               to="/dashboard"
               className="nav-link"
@@ -34,7 +32,6 @@ export default function Navbar() {
             </button>
           </>
         ) : (
-          /* MENÚ DE INVITADO (NO LOGUEADO) */
           <>
             <Link to="/login" className="nav-link">
               Ingresar
