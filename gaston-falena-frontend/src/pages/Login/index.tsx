@@ -5,7 +5,8 @@ import Joi from "joi";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { api } from "../../api/axios";
-import "./login.css"; // ¡No olvides importar el CSS!
+import "./login.css";
+import { GoogleLogin } from "@react-oauth/google";
 
 interface LoginFormInputs {
   email: string;
@@ -39,7 +40,7 @@ export default function Login() {
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
-    setServerError(null); // Limpiamos errores previos
+    setServerError(null);
     try {
       const response = await api.post("/auth/login", data);
 
@@ -54,7 +55,7 @@ export default function Login() {
       if (axios.isAxiosError(error)) {
         const message =
           error.response?.data?.message || "Credenciales incorrectas";
-        setServerError(message); // En lugar de alert, usamos el estado
+        setServerError(message);
       } else {
         setServerError("Error inesperado al conectar con el servidor.");
         console.error("Error inesperado:", error);
@@ -68,7 +69,6 @@ export default function Login() {
         <h2>Iniciar Sesión 👋</h2>
         <p className="auth-subtitle">Ingresa a tu cuenta para continuar</p>
 
-        {/* Mostramos errores que vienen del backend (Ej: Contraseña mal) */}
         {serverError && <div className="error-message">{serverError}</div>}
 
         <form
@@ -83,10 +83,9 @@ export default function Login() {
               type="email"
               id="email"
               placeholder="ejemplo@correo.com"
-              /* Si hay error de Joi, le ponemos un borde rojo */
               className={errors.email ? "input-error" : ""}
             />
-            {/* Mensaje de error de Joi (Ej: Formato inválido) */}
+
             {errors.email && (
               <span className="error-text">{errors.email.message}</span>
             )}
@@ -110,6 +109,43 @@ export default function Login() {
             {isSubmitting ? "Ingresando..." : "Ingresar"}
           </button>
         </form>
+
+        <div
+          style={{
+            marginTop: "1.5rem",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              try {
+                const response = await api.post("/auth/google", {
+                  token: credentialResponse.credential,
+                });
+
+                if (response.status === 200) {
+                  const { token } = response.data;
+                  localStorage.setItem("token", token);
+                  localStorage.setItem("isAuthenticated", "true");
+
+                  navigate("/dashboard");
+                }
+              } catch (error) {
+                console.error("Error validando en el backend:", error);
+                setServerError(
+                  "Hubo un problema al conectar tu cuenta de Google.",
+                );
+              }
+            }}
+            onError={() => {
+              console.log("Error al iniciar sesión con Google");
+              setServerError("Google canceló el inicio de sesión.");
+            }}
+            theme="outline"
+            text="signin_with"
+          />
+        </div>
 
         <div className="auth-footer">
           ¿No tienes una cuenta? <Link to="/register">Regístrate aquí</Link>
