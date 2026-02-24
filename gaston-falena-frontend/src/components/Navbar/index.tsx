@@ -19,9 +19,9 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      {/* LOGO */}
       <Link to="/" className="navbar-logo" onClick={closeMenu}>
-        🏠 Inicio
+        <img src="/Logo.png" alt="InventarList Logo" className="logo-img" />
+        <span className="logo-text">InventarList</span>
       </Link>
 
       <button
@@ -43,7 +43,6 @@ export default function Navbar() {
             </button>
           </>
         ) : (
-          /* MENÚ INVITADO */
           <>
             <Link to="/login" className="nav-link" onClick={closeMenu}>
               Ingresar
