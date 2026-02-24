@@ -12,7 +12,6 @@ export default function ProtectedLayout() {
   return (
     <>
       <Navbar />
-      {/* 2. IMPORTANTE: El Outlet le dice a React "AQUÍ DIBUJA LA PÁGINA" */}
       <main style={{ padding: "2rem", paddingTop: "80px" }}>
         <Outlet />
       </main>
