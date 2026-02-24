@@ -5,7 +5,7 @@ import Joi from "joi";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { api } from "../../api/axios";
-import "./register.css";
+import "./Register.css";
 
 interface RegisterFormInputs {
   name: string;

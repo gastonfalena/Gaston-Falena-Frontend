@@ -5,7 +5,7 @@ import Joi from "joi";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { api } from "../../api/axios";
-import "./login.css";
+import "./Login.css";
 import { GoogleLogin } from "@react-oauth/google";
 
 interface LoginFormInputs {

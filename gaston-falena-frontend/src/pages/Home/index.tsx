@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { api } from "../../api/axios";
-import "./home.css";
+import "./Home.css";
 
 export default function Home() {
   const [totalItems, setTotalItems] = useState<number>(0);
