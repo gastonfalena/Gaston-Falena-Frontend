@@ -1,73 +1,42 @@
-# React + TypeScript + Vite
+# 📦 InventarList - Frontend (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interfaz de usuario (SPA) para **InventarList**, una aplicación de gestión jerárquica de inventarios. Permite a los usuarios organizar sus pertenencias en Casas, Contenedores e Ítems a través de una experiencia fluida y responsive.
 
-Currently, two official plugins are available:
+## 🚀 Tecnologías Utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Este proyecto fue inicializado con **Vite** para garantizar tiempos de compilación ultrarrápidos y un entorno de desarrollo óptimo.
 
-## React Compiler
+- **Core:** React 18, TypeScript
+- **Enrutamiento:** React Router DOM v6
+- **Peticiones HTTP:** Axios (con interceptores configurados para el manejo de credenciales)
+- **Estilos:** CSS puro modularizado por componentes.
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+## 🏗️ Arquitectura y Estructura
 
-## Expanding the ESLint configuration
+El código está organizado modularmente para separar responsabilidades y facilitar la escalabilidad:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **`/src/api`**: Configuración centralizada de la instancia de Axios, manejando las cookies y credenciales automáticamente (`withCredentials: true`).
+- **`/src/components`**: Componentes reutilizables que renderizan la lógica de negocio (Secciones de Casas, Contenedores e Ítems, Navbar, etc.).
+- **`/src/layouts`**: Controladores de enrutamiento visual. Incluye un `ProtectedLayout` que restringe el acceso a usuarios no autenticados y redirige al login de manera segura.
+- **`/src/pages`**: Vistas principales de la aplicación (Home, Login, Register, Dashboard).
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## ⚙️ Configuración Local
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Prerrequisitos
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- Node.js (v18 o superior)
+- Backend de InventarList en ejecución (por defecto en `http://localhost:3000`).
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Instalación
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. Clonar el repositorio:
+   ```bash
+   git clone [https://github.com/gastonfalena/Gaston-Falena-Frontend.git](https://github.com/gastonfalena/Gaston-Falena-Frontend.git)
+   cd Gaston-Falena-Frontend
+   ```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+###
+
+VITE_API_URL=url_para_hacer_fetch
+
+###
